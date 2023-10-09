@@ -11,6 +11,52 @@ const SignUp = () => {
     const from = location.state?.from?.pathname || '/';
     const { loading, setLoading, signInWithGoogle, createUser, updateUserProfile } = useContext(AuthContext);
 
+// handle registration user
+    const handleSubmit = event =>{
+        event.preventDefault();
+        const name = event.target.email.name;
+        const email = event.target.email.value;
+        const password = event.target.password.value;
+        // image upload
+        const image = event.target.image.files[0]
+        const fromData = new FormData()
+        fromData.append('image',image)
+        const url = `https://api.imgbb.com/1/upload?key=${import.meta.env.VITE_imgbb}`
+        fetch(url,{
+            method: 'POST',
+            body: fromData,
+        })
+        .then(res=>res.json())
+        .then(imgData=>{
+            const imageUrl = imgData.data.display_url;
+            // create user
+            createUser(email,password)
+            .then(result => {
+                // update user
+                updateUserProfile(name,imageUrl)
+                .then(() => {
+                    navigate(from, { replace: true });
+                    toast.success('SignUp Successfully')
+                })
+                .catch(err => {
+                    console.log(err.message);
+                    setLoading(false);
+                    toast.error('something went wrong');
+                })
+            })
+            .catch(err => {
+                console.log(err.message);
+                setLoading(false);
+                toast.error('something went wrong');
+            })
+        })
+        .catch(err => {
+            console.log(err.message);
+            setLoading(false);
+            toast.error('something went wrong');
+        })
+    }
+
     // handle Google Login
     const handleGoogleLogin = () => {
         signInWithGoogle()
@@ -33,6 +79,7 @@ const SignUp = () => {
                     <p className='text-sm text-gray-400'>Welcome to AirCNC</p>
                 </div>
                 <form
+                onSubmit={handleSubmit}
                     noValidate=''
                     action=''
                     className='space-y-6 ng-untouched ng-pristine ng-valid'
