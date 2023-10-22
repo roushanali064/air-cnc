@@ -15,6 +15,7 @@ const SignUp = () => {
 // handle registration user
     const handleSubmit = event =>{
         event.preventDefault();
+        setLoading(true)
         const name = event.target.email.name;
         const email = event.target.email.value;
         const password = event.target.password.value;
@@ -38,6 +39,7 @@ const SignUp = () => {
                 .then(() => {
                     saveUser(result.user);
                     navigate(from, { replace: true });
+                    setLoading(false);
                     toast.success('SignUp Successfully')
                 })
                 .catch(err => {
@@ -61,10 +63,12 @@ const SignUp = () => {
 
     // handle Google Login
     const handleGoogleLogin = () => {
+        setLoading(true)
         signInWithGoogle()
             .then(result => {
                 saveUser(result.user);
                 navigate(from, { replace: true });
+                setLoading(false)
             })
             .catch(err => {
                 console.log(err.message);
