@@ -1,3 +1,12 @@
+// get bookings
+
+export const getBookings = async email =>{
+    const response = await fetch(`http://localhost:5000/bookings?email=${email}`)
+    const bookings = await response.json()
+    return bookings;
+}
+
+// saved booking
 export const savedBooking = async bookingInfo =>{
     const response = await fetch(`http://localhost:5000/booking`,{
         method: 'POST',
@@ -6,7 +15,7 @@ export const savedBooking = async bookingInfo =>{
         },
         body: JSON.stringify(bookingInfo)
     })
-    const data = response.json()
+    const data = await response.json()
     return data;
 }
 
@@ -14,7 +23,7 @@ export const savedBooking = async bookingInfo =>{
 
 export const saveBookingStatus = async (roomId,status) => {
     const response = await fetch(`http://localhost:5000/bookingStatus/${roomId}`, {
-        method: 'PUT',
+        method: 'PATCH',
         headers: {
             'content-type': 'application/json'
         },
@@ -22,4 +31,17 @@ export const saveBookingStatus = async (roomId,status) => {
     })
     const data = await response.json()
     return data
+}
+
+// delete booking
+
+export const deleteBooking = async id =>{
+    const response = await fetch(`http://localhost:5000/booking/${id}`,{
+        method: 'DELETE',
+        headers:{
+            'content-type': 'application/json'
+        },
+    })
+    const data = await response.json()
+    return data;
 }

@@ -24,6 +24,7 @@ const RoomReservation = ({roomData}) => {
     // booking info state
     const [bookingInfo, setBookingInfo] = useState({
         roomId: roomData?._id,
+        image: roomData?.image,
         title: roomData?.title,
         guest: {name: user?.displayName, email: user?.email, image: user?.photoURL},
         host: roomData?.host?.email,
@@ -41,17 +42,23 @@ const RoomReservation = ({roomData}) => {
             if(res?.insertedId){
                 saveBookingStatus(roomData?._id,{bookingStatus:true})
                 .then(res=>{
-                    toast.success('booking successfully')
-                    navigate('/')
+                    if(res.modifiedCount){
+                        console.log(res);
+                        closeModal()
+                        navigate('/dashboard/my-bookings')
+                        toast.success('booking successfully')
+                    }
                 })
                 .catch(err=>{
                     console.log(err.message);
+                    closeModal()
                     toast.error(err.message)
                 })
             }
         })
         .catch(err=>{
             console.log(err.message);
+            closeModal()
             toast.error(err.message)
         })
     }
